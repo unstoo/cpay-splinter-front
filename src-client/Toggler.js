@@ -14,8 +14,7 @@ class Toggler extends React.Component {
     this.setState((prevState, prosp) => {
       this.props.handlers.toggle()
       return { active: !prevState.active }
-    })
-    
+    }) 
   }
 
   render() {
@@ -52,13 +51,14 @@ const toggler_handler = {
   borderRadius: '50%',
   position: 'absolute',
   left: '2px',
-  top: '2px'
+  top: '2px',
+  transitionProperty: 'left',
+  transitionDuration: '0.3s'
 }
 
 const toggler_handler__active = Object.assign({}, toggler_handler,
   {
-    right: '2px',
-    left: 'auto'
+    left: '22px'
   })
   
 const toggler_track__active = Object.assign({}, toggler_track,
