@@ -2,10 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { hot } from 'react-hot-loader'
 import { setConfig } from 'react-hot-loader'
-import data from './data'
 setConfig({ logLevel: 'debug' })
-console.log(data);
-
 
 import TagsIndex from './TagsIndex'
 import List from './List'
@@ -22,16 +19,30 @@ class App extends React.Component {
     this.state = {
       data: [],
       selectedTags: [],
-      showFeedbacksOnlyWithoutTags: false
+      showFeedbacksOnlyWithoutTags: false,
+      showModalForNewFeedback: false
     }    
   }
 
-  loadData = (data) => {
+  addNewFeedback = (e) => {
+    e.preventDefault()
+    const newFeedback = {}
+    e.target.querySelectorAll('input').forEach(input => {
+      newFeedback[input.name] = input.value
+      input.value = ''
+    })
     
     this.setState((prevState, props) => {
-      return {
-        data
-      }
+      newFeedback.id = prevState.data.length
+      const data = prevState.data.concat(newFeedback)
+      return { data }
+    })
+  }
+
+  loadData = (data) => {
+    window.data = data
+    this.setState((prevState, props) => {
+      return { data }
     })
   }
 
@@ -107,12 +118,15 @@ class App extends React.Component {
     }
 
     return <div className='react-widget'>
+      <form onSubmit={this.addNewFeedback}>
       <button>Add New Feedback</button>
-      <br/>Ваше имя?
-      <br/>Линк на live chat?
-      <br/>Страна обратившегося?
-      <br/>Комментарий?
+      <br/>Ваше имя?<input name='name' type='text'/>
+      <br/>Линк на live chat?<input name='url' type='text'/>
+      <br/>Страна обратившегося?<input name='country' type='text'/>
+      <br/>Комментарий?<input name='notes' type='text'/>
+      <br/>Метки?<input name='tags' type='text'/>
       <br/>
+      </form>
       <Toggler handlers={{toggle: this.toggleFeedbackList}} style={{margin: '5px'}}>
         <SwitchChildren active={this.state.showFeedbacksOnlyWithoutTags}>
           <span>Only show feedbacks without tags</span>
