@@ -25,6 +25,12 @@ class App extends React.Component {
     }    
   }
 
+  showModal = () => {
+    this.setState((prevState, props) => {
+      return { showModalForNewFeedback: !prevState.showModalForNewFeedback }
+    })
+  }
+
   removeFeedback = (e) => {
     e.preventDefault()
     const feedbackIndexToRemove = parseInt(e.target.dataset.feedbackindex)
@@ -48,7 +54,7 @@ class App extends React.Component {
     this.setState((prevState, props) => {
       newFeedback.id = prevState.data.length
       const data = prevState.data.concat(newFeedback)
-      return { data }
+      return { data, showModalForNewFeedback: !prevState.showModalForNewFeedback }
     })
   }
 
@@ -134,6 +140,8 @@ class App extends React.Component {
     }
 
     return <div className='main-frame'>
+      <ModalForm handlers={{onSubmit: this.addNewFeedback}} visible={this.state.showModalForNewFeedback}/>
+
       <div className='feedbacks-list'>
         { this.state.data.length > 0 && <React.Fragment>
           <h2>Feedback list</h2> 
@@ -144,8 +152,6 @@ class App extends React.Component {
       </div>
 
       <div className='right'>
-        {/* <ModalForm handlers={{onSubmit: this.addNewFeedback}}>
-        </ModalForm> */}
         <Toggler handlers={{toggle: this.toggleFeedbackList}} 
           style={margin_bottom}>
           <SwitchChildren active={this.state.showFeedbacksOnlyWithoutTags}>
@@ -161,6 +167,8 @@ class App extends React.Component {
         <LoadFileContent handlers={{dataLoaded: this.loadData}} style={margin_bottom}>
           Load feedbacks
         </LoadFileContent>
+
+        <div className='button' style={margin_bottom} onClick={this.showModal}>Add feedback</div>
 
           <h3>Tags index</h3> 
           <TagsIndex data={filteredData}

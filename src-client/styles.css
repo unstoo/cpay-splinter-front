@@ -7,6 +7,10 @@ h1,h2,h3,h4,h5 {
   color: #333;
 }
 
+a {
+  text-decoration: none;
+}
+
 .main-frame {
   display: flex;
 }
@@ -25,7 +29,7 @@ h1,h2,h3,h4,h5 {
   bottom: 0px;
   padding: 5px;
   padding-left: 15px;
-  padding-top: 15px;
+  padding-top: 75px;
   background: #eee;
   box-shadow: 
     0 -2px 5px 0 rgba(34,34,34,0.05) inset,
@@ -60,11 +64,10 @@ h1,h2,h3,h4,h5 {
 }
 
 .feedback-item {
-  box-shadow: 
-    0 0 5px 0 rgba(34,34,34,0.2),
-    0 0 5px 0 rgba(34,34,34,0.2);
+  box-shadow: 3px 3px 6px 0 rgba(34,34,34,0.05);
   border-radius: 5px;
   padding: 10px;
   padding-left: 15px;
-  background-color: #fbfbfa;
+  /* background-color: #fbfbfa; */
+  border: 1px solid #eee;
 }

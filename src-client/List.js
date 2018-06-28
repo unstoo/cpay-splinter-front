@@ -14,10 +14,10 @@ class List extends React.Component {
     const feedbacksList = this.props.data.map((feedback, index) => {
         return <div key={ 'feedback-' + feedback.id } style={styles} className='feedback-item'>
           { feedback.id }) 
-          {' '}{ feedback['name'] } 
-          {' '}<a href={ feedback.url }>Intercom chat</a>
+          { ' ' + feedback['name'] + ' ' } 
+          <a href={ feedback.url }>chat</a>
           <br/>
-          <br/>
+          <hr/>
           <div>{ feedback.notes }</div>
           <Tags 
             handlers={{ addTag: this.props.handlers.addTag, removeTag: this.props.handlers.removeTag }} 

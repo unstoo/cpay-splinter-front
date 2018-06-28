@@ -37,9 +37,12 @@ class Tags extends React.Component {
     const chipTags = tags.map(tag => {
       if (!tag) return
 
-      return <span key={tag} style={chipTag}>
-        { tag + ' ' }  
-        <button onClick={this.removeTag} data-tagname={tag}>x</button>
+      return <span key={tag} style={chip_tag}>
+        <span>{ tag + ' ' }</span>
+        <button onClick={this.removeTag} data-tagname={tag} 
+          className='button' style={x_button_style}>
+            <span style={x_style}>x</span>
+        </button>
       </span>
     })
 
@@ -47,23 +50,45 @@ class Tags extends React.Component {
       <span>{ chipTags }</span>
       <br/>
       <form onSubmit={this.addTag}>
-        <input type='text' />{' '}
-        <button className='button'>Add tag</button>
+        <input type='text' style={input_style}/>{' '}
+        <button className='button' style={input_style}>Add tag</button>
       </form>
     </div>
   }
 }
 
-
-const chipTag = {
-  background: 'rgba(29,119,201,1)',
+const chip_tag = {
+  background: 'dodgerblue',
   padding: '4px',
   paddingLeft: '8px',
   margin: '5px',
   marginLeft: '0px',
-  borderRadius: '4px',
-  display: 'inline-block',
+  borderRadius: '5px',
+  display: 'inline-flex',
   color: 'white'
+}
+
+const x_button_style = {
+  height: '20px',
+  width: '20px',
+  display: 'inline-flex',
+  padding: '0px',
+  marginLeft: '5px'
+}
+
+const x_style = {
+  fontSize: '10px',
+  marginBottom: '2px',
+  margin: 'auto auto'
+}
+
+const input_style = {
+  height: '25px',
+  borderRadius: '5px',
+  border: '1px solid #ddd',
+  fontSize: '14px',
+  paddingLeft: '5px',
+  lineHeight: '14px'
 }
 
 export default Tags
