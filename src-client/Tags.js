@@ -48,7 +48,7 @@ class Tags extends React.Component {
       <br/>
       <form onSubmit={this.addTag}>
         <input type='text' />{' '}
-        <button>Add tag</button>
+        <button className='button'>Add tag</button>
       </form>
     </div>
   }

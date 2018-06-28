@@ -15,14 +15,16 @@ class LoadFileContent extends React.Component {
       this.props.handlers.dataLoaded(contents)
     }
 
-    reader.readAsText(e.target[0].files[0])
+    reader.readAsText(e.target.files[0])
   }
 
   render() {
-    return <div>
-      <form onSubmit={this.load}>
-        <input type="file" />  
-        <button>{this.props.children}</button>
+    return <div style={Object.assign({}, this.props.style)}>
+      <form>
+        <label className='button' htmlFor="upload-data">
+          {this.props.children}
+        </label>
+        <input onChange={this.load} type="file" className='hidden-input' id="upload-data" />
       </form>
     </div>
   }

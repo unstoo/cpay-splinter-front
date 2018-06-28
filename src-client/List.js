@@ -11,8 +11,8 @@ class List extends React.Component {
   }
 
   render() {
-    const listOfFeedback = this.props.data.map((feedback, index) => {
-        return <div key={ 'feedback-' + feedback.id }>
+    const feedbacksList = this.props.data.map((feedback, index) => {
+        return <div key={ 'feedback-' + feedback.id } style={styles} className='feedback-item'>
           { feedback.id }) 
           {' '}{ feedback['name'] } 
           {' '}<a href={ feedback.url }>Intercom chat</a>
@@ -21,14 +21,17 @@ class List extends React.Component {
             handlers={{ addTag: this.props.handlers.addTag, removeTag: this.props.handlers.removeTag }} 
             data={ feedback.tags }
             index={ feedback.id } />
-          <hr/>
         </div>
     })
 
     return <div className='list-component'>
-      { listOfFeedback }
+      { feedbacksList }
     </div>
   }
 }
 
 export default List
+
+const styles = {
+  marginBottom: '40px'
+}

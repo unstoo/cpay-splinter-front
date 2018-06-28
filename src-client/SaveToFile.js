@@ -17,8 +17,9 @@ class SaveToFile extends React.Component {
   }
 
   render() {
-    return <div onClick={this.download}>
-      <a href='#'>{ this.props.children }</a>
+    return <div onClick={this.download} className='button'
+      style={Object.assign({}, this.props.style)}>
+      { this.props.children }
     </div>
   }
 }

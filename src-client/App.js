@@ -11,6 +11,7 @@ import Toggler from './Toggler'
 import SwitchChildren from './SwitchChildren'
 import SaveToFile from './SaveToFile'
 import LoadFileContent from './LoadFileContent'
+import ModalForm from './ModalForm'
 
 
 class App extends React.Component { 
@@ -117,47 +118,45 @@ class App extends React.Component {
       })
     }
 
-    return <div className='react-widget'>
-      <form onSubmit={this.addNewFeedback}>
-      <button>Add New Feedback</button>
-      <br/>Ваше имя?<input name='name' type='text'/>
-      <br/>Линк на live chat?<input name='url' type='text'/>
-      <br/>Страна обратившегося?<input name='country' type='text'/>
-      <br/>Комментарий?<input name='notes' type='text'/>
-      <br/>Метки?<input name='tags' type='text'/>
-      <br/>
-      </form>
-      <Toggler handlers={{toggle: this.toggleFeedbackList}} style={{margin: '5px'}}>
-        <SwitchChildren active={this.state.showFeedbacksOnlyWithoutTags}>
-          <span>Only show feedbacks without tags</span>
-          <span>Show all feedbacks</span>
-        </SwitchChildren>
-      </Toggler>
+    return <div className='main-frame'>
+      <div className='feedbacks-list'>
+        { this.state.data.length > 0 && <React.Fragment>
+          <h2>Feedback list</h2> 
+          <List data={filteredData}
+            handlers={{addTag: this.addTag, removeTag: this.removeTag}}  
+          />
+        </React.Fragment> }
+      </div>
 
-      <SaveToFile data={this.state.data}>
-        Save data to a file
-      </SaveToFile>
+      <div className='right'>
+        {/* <ModalForm handlers={{onSubmit: this.addNewFeedback}}>
+        </ModalForm> */}
+        <Toggler handlers={{toggle: this.toggleFeedbackList}} 
+          style={margin_bottom}>
+          <SwitchChildren active={this.state.showFeedbacksOnlyWithoutTags}>
+            <span>Feedbacks without tags</span>
+            <span>Show all feedbacks</span>
+          </SwitchChildren>
+        </Toggler>
 
-      <LoadFileContent handlers={{dataLoaded: this.loadData}}>
-        Load data from a file
-      </LoadFileContent>
+        <SaveToFile data={this.state.data} style={margin_bottom}>
+          Save feedbacks
+        </SaveToFile>
 
-      
-      {this.state.data.length && <React.Fragment>
-        <h2>Filter by tags</h2>
-        <TagsFilter data={this.state.selectedTags}
-          handlers={{deselectTag: this.deselectTag}}/>
+        <LoadFileContent handlers={{dataLoaded: this.loadData}} style={margin_bottom}>
+          Load feedbacks
+        </LoadFileContent>
 
-        <h2>Tags index</h2> 
-        <TagsIndex data={filteredData}
-          filteredTags={this.state.selectedTags}
-          handlers={{selectTag: this.selectTag}} 
-        />
-        <h2>Feedback list</h2> 
-        <List data={filteredData}
-          handlers={{addTag: this.addTag, removeTag: this.removeTag}}  
-        />
-      </React.Fragment>}
+          <h3>Tags index</h3> 
+          <TagsIndex data={filteredData}
+            filteredTags={this.state.selectedTags}
+            handlers={{selectTag: this.selectTag}} 
+          />
+
+          <h3>Filter by tags</h3>
+          <TagsFilter data={this.state.selectedTags}
+            handlers={{deselectTag: this.deselectTag}}/>
+      </div>
     </div>
   }
 }
@@ -197,3 +196,5 @@ function arrayIncludesAtLeastOneEntry(array, entries) {
 
   return flag
 }
+
+const margin_bottom = {marginBottom: '10px'}

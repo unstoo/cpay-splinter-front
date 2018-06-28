@@ -40,7 +40,8 @@ const toggler_track   = {
   height: '30px',
   borderRadius: '30px',
   background: 'silver',
-  position: 'relative'
+  position: 'relative',
+  cursor: 'pointer'
 }
 
 const toggler_handler = {
@@ -50,8 +51,8 @@ const toggler_handler = {
   border: '1px solid white',
   borderRadius: '50%',
   position: 'absolute',
-  left: '2px',
-  top: '2px',
+  left: '4px',
+  top: '3px',
   transitionProperty: 'left',
   transitionDuration: '0.3s'
 }

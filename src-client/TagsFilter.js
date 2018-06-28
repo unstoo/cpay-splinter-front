@@ -17,7 +17,7 @@ class TagsFilter extends React.Component {
       onClick={this.onTagClick}>
       { key } <button type='button'>x</button>  </span>)
 
-    return <div className='list-component'>
+    return <div className='tags-filter'>
       { tags }
     </div>
   }
