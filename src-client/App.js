@@ -25,6 +25,18 @@ class App extends React.Component {
     }    
   }
 
+  removeFeedback = (e) => {
+    e.preventDefault()
+    const feedbackIndexToRemove = parseInt(e.target.dataset.feedbackindex)
+
+    this.setState((prevState, props) => {
+      data = prevState.data.filter(feedback => feedback.id !== feedbackIndexToRemove)
+
+      return { data }
+    })
+
+  }
+
   addNewFeedback = (e) => {
     e.preventDefault()
     const newFeedback = {}
@@ -57,7 +69,9 @@ class App extends React.Component {
     console.log('addTag')
     console.log(options)
     const data = this.state.data
-    const entry = data[options.index]
+
+    const index = findFeedbackIndexInDataByFeedbackId(data, options.feedbackid)
+    const entry = data[index]
     // duplicate tag for the given feedback entry
     if (entry.tags.split(' ').includes(options.tagName)) return
 
@@ -73,7 +87,8 @@ class App extends React.Component {
     console.log(options)
 
     const data = this.state.data
-    const entry = data[options.index]
+    const index = findFeedbackIndexInDataByFeedbackId(data, options.feedbackid)
+    const entry = data[index]
     const purgedTagsList = removeWordFromString(entry.tags, options.tagName)
     entry.tags = purgedTagsList
     data[options.index] = entry
@@ -123,7 +138,7 @@ class App extends React.Component {
         { this.state.data.length > 0 && <React.Fragment>
           <h2>Feedback list</h2> 
           <List data={filteredData}
-            handlers={{addTag: this.addTag, removeTag: this.removeTag}}  
+            handlers={{addTag: this.addTag, removeTag: this.removeTag, removeFeedback: this.removeFeedback}}  
           />
         </React.Fragment> }
       </div>
@@ -195,6 +210,13 @@ function arrayIncludesAtLeastOneEntry(array, entries) {
   }
 
   return flag
+}
+
+function findFeedbackIndexInDataByFeedbackId(data, id) {
+  for (let index = 0; index < data.length; index++) {
+    if (data[index].id === id)
+      return index 
+  }
 }
 
 const margin_bottom = {marginBottom: '10px'}

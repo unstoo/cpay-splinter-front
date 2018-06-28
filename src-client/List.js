@@ -16,11 +16,16 @@ class List extends React.Component {
           { feedback.id }) 
           {' '}{ feedback['name'] } 
           {' '}<a href={ feedback.url }>Intercom chat</a>
+          <br/>
+          <br/>
           <div>{ feedback.notes }</div>
           <Tags 
             handlers={{ addTag: this.props.handlers.addTag, removeTag: this.props.handlers.removeTag }} 
             data={ feedback.tags }
-            index={ feedback.id } />
+            feedbackid={ feedback.id } />
+
+          <button style={styles_remove} data-feedbackindex={ feedback.id } 
+            onClick={this.props.handlers.removeFeedback} className='button'>Remove</button>
         </div>
     })
 
@@ -33,5 +38,13 @@ class List extends React.Component {
 export default List
 
 const styles = {
-  marginBottom: '40px'
+  marginBottom: '40px',
+  position: 'relative'
+}
+
+const styles_remove = {
+  position: 'absolute',
+  right: '15px',
+  bottom: '15px',
+  zIndex: '2'
 }

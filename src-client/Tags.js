@@ -13,7 +13,7 @@ class Tags extends React.Component {
     e.preventDefault()
 
     this.props.handlers.removeTag({
-      index: this.props.index,
+      feedbackid: this.props.feedbackid,
       tagName: e.target.dataset.tagname
     })
   }
@@ -27,7 +27,7 @@ class Tags extends React.Component {
     if (newTagName === '') return
 
     this.props.handlers.addTag({
-      index: this.props.index,
+      feedbackid: this.props.feedbackid,
       tagName: newTagName
     })
   }
