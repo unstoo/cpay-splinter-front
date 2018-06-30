@@ -30,6 +30,12 @@ class App extends React.Component {
     }    
   }
 
+  clearDateRangeFilter = () => {
+    this.setState({
+      selectedDatesRange: { start: 0, end: 0 }
+    })
+  }
+
   setDateRangeFilter = (options) => {
     console.log('setDateRangeFilter');
     console.log(options);
@@ -202,6 +208,8 @@ class App extends React.Component {
         <DateRange handlers={{ onSubmit : this.setDateRangeFilter }}>
           Set date range
         </DateRange>
+
+        <button className='button' onClick={this.clearDateRangeFilter}>Clear date range</button>
 
           <h3>Tags index</h3> 
           <TagsIndex data={filteredData}
