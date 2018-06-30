@@ -8,11 +8,7 @@ class ModalForm extends React.Component {
 
   onSubmit = e => {
     e.preventDefault()
-    
     this.props.handlers.onSubmit(e)
-    this.setState((prevState, props) => {
-      return { isModalHidden: true }
-    })
   }
 
   render() {

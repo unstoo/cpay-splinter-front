@@ -12,6 +12,7 @@ import SwitchChildren from './SwitchChildren'
 import SaveToFile from './SaveToFile'
 import LoadFileContent from './LoadFileContent'
 import ModalForm from './ModalForm'
+import DateRange from './DateRange'
 
 
 class App extends React.Component { 
@@ -20,9 +21,23 @@ class App extends React.Component {
     this.state = {
       data: [],
       selectedTags: [],
+      selectedDatesRange: {
+        start: 0,
+        end: 0,
+      },
       showFeedbacksOnlyWithoutTags: false,
       showModalForNewFeedback: false
     }    
+  }
+
+  selectDateRange = (options) => {
+    this.setState((prevState, props) => {
+      return { selectedDatesRange: {
+        start: options.start,
+        end: options.end,
+        } 
+      }
+    })
   }
 
   showModal = () => {
@@ -169,6 +184,10 @@ class App extends React.Component {
         </LoadFileContent>
 
         <div className='button' style={margin_bottom} onClick={this.showModal}>Add feedback</div>
+        
+        <DateRange handlers={{ onSubmit : this.setDateRangeFilter }}>
+          Set date range
+        </DateRange>
 
           <h3>Tags index</h3> 
           <TagsIndex data={filteredData}
