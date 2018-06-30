@@ -23,7 +23,7 @@ class DateRange extends React.Component {
       end: this.endDate(e)
     }
 
-    console.log(options)
+    this.props.handlers.onSubmit(options)
   }
 
   checkDateRangeSanity = e => {
@@ -75,7 +75,8 @@ class DateRange extends React.Component {
       <form onSubmit={ this.onSubmit }>
         <input name='start' type='date' onChange={this.checkDateRangeSanity}/>
         <input name='end' type='date' onChange={this.checkDateRangeSanity}/>
-        <button> { this.props.children } </button>
+        <br/><br/>
+        <button className='button'> { this.props.children } </button>
       </form>
     </div>
   }

@@ -30,7 +30,10 @@ class App extends React.Component {
     }    
   }
 
-  selectDateRange = (options) => {
+  setDateRangeFilter = (options) => {
+    console.log('setDateRangeFilter');
+    console.log(options);
+    
     this.setState((prevState, props) => {
       return { selectedDatesRange: {
         start: options.start,

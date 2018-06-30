@@ -12,7 +12,10 @@ class ModalForm extends React.Component {
   }
 
   render() {
-
+    const date = new Date()
+    const dateAsValue = date.toJSON().split('T')[0]
+    console.log(dateAsValue);
+    
     return <div style={this.props.visible ? style_visible : style_hidden}>
       <form onSubmit={this.onSubmit}>
         
@@ -21,7 +24,7 @@ class ModalForm extends React.Component {
         <br/><label>Страна обратившегося? <input name='country' type='text'/></label>
         <br/><label>Комментарий? <input name='notes' type='text'/></label>
         <br/><label>Метки? <input name='tags' type='text'/></label>
-        <br/>
+        <br/><input name='date' type='date' value={dateAsValue} hidden/>
         <hr/>
         <button className='button'>Add New Feedback</button>
       </form>
