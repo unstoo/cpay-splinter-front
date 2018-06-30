@@ -142,6 +142,16 @@ class App extends React.Component {
   render() {
     let filteredData = this.state.data
 
+    // Filter by date range
+
+    if (this.state.selectedDatesRange.start && this.state.selectedDatesRange.end) {
+      filteredData = filteredData.filter(feedback => {
+        if (feedback.date >= this.state.selectedDatesRange.start && feedback.date <= this.state.selectedDatesRange.end)
+          return true
+      })
+    }
+
+    // Show only feedbacks without tags
     if (!this.state.selectedTags.length &&
       this.state.showFeedbacksOnlyWithoutTags) {
         filteredData = filteredData.filter(feedback => {
@@ -156,6 +166,7 @@ class App extends React.Component {
         return arrayIncludesAllEntries(tagsOfFeedback, this.state.selectedTags) 
       })
     }
+
 
     return <div className='main-frame'>
       <ModalForm handlers={{onSubmit: this.addNewFeedback}} visible={this.state.showModalForNewFeedback}/>
