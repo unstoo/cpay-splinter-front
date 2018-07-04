@@ -18,13 +18,12 @@ class ModalForm extends React.Component {
     
     return <div style={this.props.visible ? style_visible : style_hidden}>
       <form onSubmit={this.onSubmit}>
-        
-        <br/><label>Ваше имя? <input name='name' type='text'/></label>
+
         <br/><label>Линк на live chat? <input name='url' type='text'/></label>
         <br/><label>Страна обратившегося? <input name='country' type='text'/></label>
         <br/><label>Комментарий? <input name='notes' type='text'/></label>
         <br/><label>Метки? <input name='tags' type='text'/></label>
-        <br/><input name='date' type='date' value={dateAsValue} hidden/>
+        <br/><input name='date' type='date' value={dateAsValue} hidden readonly/>
         <hr/>
         <button className='button'>Add New Feedback</button>
       </form>
@@ -35,9 +34,9 @@ class ModalForm extends React.Component {
 export default ModalForm
 
 const style_visible = {
+  top: '100px',
   position: 'fixed',
   background: 'white',
-  top: '100px',
   left: '320px',
   zIndex: '2',
   padding: '100px',
@@ -47,9 +46,9 @@ const style_visible = {
 }
 
 const style_hidden = {
+  top: '-1000px',
   position: 'fixed',
   background: 'white',
-  top: '-1000px',
   left: '320px',
   zIndex: '2',
   padding: '100px',
