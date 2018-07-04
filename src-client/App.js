@@ -20,6 +20,7 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      author: '',
       data: [],
       selectedTags: [],
       selectedDatesRange: {
@@ -44,7 +45,10 @@ class App extends React.Component {
       const result = await res.json()
       console.log(result)
       this.setState((prevState, props) => {
-        return { data: result }
+        return { 
+          data: result.data,
+          author: result.author
+        }
       })
   }
 
@@ -87,8 +91,6 @@ class App extends React.Component {
       input.value = ''
     })
 
-    this.sendFeedback(newFeedback)
-
     this.setState((prevState, props) => {
       newFeedback.id = prevState.data.length
       const data = prevState.data.concat(newFeedback)
@@ -96,23 +98,35 @@ class App extends React.Component {
     })
   }
 
-  sendFeedback = async (feedback) => {
+  serializeFeedbackInput = (e) => {
+    e.preventDefault()
+    const newFeedback = {}
 
-    feedback = JSON.stringify(feedback)
+    e.target.querySelectorAll('input').forEach(input => {
+      newFeedback[input.name] = input.value
+      input.value = ''
+    })
+
+    return newFeedback
+  }
+
+  sendFeedback = async (e) => { 
+
+    const feedback = this.serializeFeedbackInput(e)
 
     const res = await fetch('http://localhost:5000/api/feedback', {
       method: 'POST',
       credentials: 'same-origin',
-      body: JSON.stringify({rediska: 42}),
+      body: JSON.stringify(feedback),
       headers: {
               "Content-Type": "application/json; charset=utf-8"
           }
       })
 
     const result = await res.json()
-    console.log(result)
 
-      // Let use know that the data was uploaded
+    // TODO: Error check
+    console.log(result)
   }
 
   loadData = (data) => {
@@ -179,7 +193,22 @@ class App extends React.Component {
   }
 
   wsAddFeedback = ({ author, body }) => {
-    console.log('wsAddFeedback', author, body);
+    console.log('wsAddFeedback')
+    console.log(author, body);
+    const newFeedback = body
+
+    this.setState((prevState, props) => {
+
+      const data = prevState.data.concat(newFeedback)
+      // TODO hide spinner (and make one ;-))
+      if (this.isAuthorMe(author) === false)
+        this.showNotification(author + 'has added new feedback')
+
+      return { 
+        data, 
+        showModalForNewFeedback: this.isAuthorMe(author) ? false : prevState.showModalForNewFeedback  
+      }
+    })
     
   }
 
@@ -189,6 +218,19 @@ class App extends React.Component {
 
   wsRemoveTag = ({ author, body }) => {
     console.log('wsAddFeedback', author, body);
+  }
+
+  isAuthorMe = (author) => {
+    return this.state.author === author
+  }
+
+  showNotification = (notification) => {
+    this.setState({
+      notification
+    })
+    
+    // TODO: notification stack
+    // TODO: notification side window
   }
 
   render() {
@@ -221,7 +263,7 @@ class App extends React.Component {
 
 
     return <div className='main-frame'>
-      <ModalForm handlers={{onSubmit: this.addNewFeedback}} visible={this.state.showModalForNewFeedback}/>
+      <ModalForm handlers={{onSubmit: this.sendFeedback}} visible={this.state.showModalForNewFeedback}/>
 
       <SocketTransmitter router={{
         'feedback-add': this.wsAddFeedback, // { author, body: { id, chatUrl, date, comment, tags, country } }
@@ -279,8 +321,6 @@ class App extends React.Component {
 }
 
 export default hot(module)(App)
-
-
 
 function removeWordFromString(string, word) {
   let cutString = ''
