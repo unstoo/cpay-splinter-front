@@ -39,7 +39,7 @@ class App extends React.Component {
     })
   }
 
-  async downloadData () {
+  downloadData = async () => {
       const res = await fetch('http://localhost:5000/api/getdata', {credentials: 'same-origin'})
       const result = await res.json()
       console.log(result)
@@ -49,8 +49,8 @@ class App extends React.Component {
   }
 
   setDateRangeFilter = (options) => {
-    console.log('setDateRangeFilter');
-    console.log(options);
+    console.log('setDateRangeFilter')
+    console.log(options)
     
     this.setState((prevState, props) => {
       return { selectedDatesRange: {
@@ -86,12 +86,33 @@ class App extends React.Component {
       newFeedback[input.name] = input.value
       input.value = ''
     })
-    
+
+    this.sendFeedback(newFeedback)
+
     this.setState((prevState, props) => {
       newFeedback.id = prevState.data.length
       const data = prevState.data.concat(newFeedback)
       return { data, showModalForNewFeedback: !prevState.showModalForNewFeedback }
     })
+  }
+
+  sendFeedback = async (feedback) => {
+
+    feedback = JSON.stringify(feedback)
+
+    const res = await fetch('http://localhost:5000/api/feedback', {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: JSON.stringify({rediska: 42}),
+      headers: {
+              "Content-Type": "application/json; charset=utf-8"
+          }
+      })
+
+    const result = await res.json()
+    console.log(result)
+
+      // Let use know that the data was uploaded
   }
 
   loadData = (data) => {
@@ -157,6 +178,19 @@ class App extends React.Component {
     })
   }
 
+  wsAddFeedback = ({ author, body }) => {
+    console.log('wsAddFeedback', author, body);
+    
+  }
+
+  wsAddTag = ({ author, body }) => {
+    console.log('wsAddFeedback', author, body);
+  }
+
+  wsRemoveTag = ({ author, body }) => {
+    console.log('wsAddFeedback', author, body);
+  }
+
   render() {
     let filteredData = this.state.data
 
@@ -188,7 +222,13 @@ class App extends React.Component {
 
     return <div className='main-frame'>
       <ModalForm handlers={{onSubmit: this.addNewFeedback}} visible={this.state.showModalForNewFeedback}/>
-      <SocketTransmitter />
+
+      <SocketTransmitter router={{
+        'feedback-add': this.wsAddFeedback, // { author, body: { id, chatUrl, date, comment, tags, country } }
+        'tag-add': this.wsAddTag, // { atuhor, body: { id, tagName } }
+        'tag-remove': this.wsRemoveTag, // { author, body: { id, tagName } }
+      }}/>
+
       <div className='feedbacks-list'>
         { this.state.data.length > 0 && <React.Fragment>
           <h2>Feedback list</h2> 
