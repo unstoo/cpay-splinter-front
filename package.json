@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --hotOnly --open",
     "test": "test",
-    "build": "webpack"
+    "build": "webpack && cp dist/app.bundle.js ../splinter-backend/dist/"
   },
   "author": "Yevgeny Kozlov",
   "license": "ISC",

@@ -8,8 +8,7 @@ class SaveToFile extends React.Component {
 
   download = e => {
     e.preventDefault()  
-    debugger
-    const a = document.createElement("a")
+    const a = document.createElement('a')
     const file = new Blob([JSON.stringify(this.props.data, null, 2)], {type: 'text/plain'})
     a.href = URL.createObjectURL(file)
     a.download = 'data.txt'

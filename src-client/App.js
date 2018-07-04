@@ -13,6 +13,7 @@ import SaveToFile from './SaveToFile'
 import LoadFileContent from './LoadFileContent'
 import ModalForm from './ModalForm'
 import DateRange from './DateRange'
+import SocketTransmitter from './SocketTransmitter'
 
 
 class App extends React.Component { 
@@ -27,13 +28,24 @@ class App extends React.Component {
       },
       showFeedbacksOnlyWithoutTags: false,
       showModalForNewFeedback: false
-    }    
+    } 
+    
+    this.downloadData()
   }
 
   clearDateRangeFilter = () => {
     this.setState({
       selectedDatesRange: { start: 0, end: 0 }
     })
+  }
+
+  async downloadData () {
+      const res = await fetch('http://localhost:5000/api/getdata', {credentials: 'same-origin'})
+      const result = await res.json()
+      console.log(result)
+      this.setState((prevState, props) => {
+        return { data: result }
+      })
   }
 
   setDateRangeFilter = (options) => {
@@ -176,7 +188,7 @@ class App extends React.Component {
 
     return <div className='main-frame'>
       <ModalForm handlers={{onSubmit: this.addNewFeedback}} visible={this.state.showModalForNewFeedback}/>
-
+      <SocketTransmitter />
       <div className='feedbacks-list'>
         { this.state.data.length > 0 && <React.Fragment>
           <h2>Feedback list</h2> 
@@ -187,6 +199,7 @@ class App extends React.Component {
       </div>
 
       <div className='right'>
+        <a href='logout' className='button'>Logout</a>
         <Toggler handlers={{toggle: this.toggleFeedbackList}} 
           style={margin_bottom}>
           <SwitchChildren active={this.state.showFeedbacksOnlyWithoutTags}>
