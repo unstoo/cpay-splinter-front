@@ -43,9 +43,13 @@ class App extends React.Component {
   }
 
   downloadData = async () => {
-      const res = await fetch('http://localhost:5000/api/getdata', {credentials: 'same-origin'})
-      const result = await res.json()
-      console.log(result)
+      try {
+        const res = await fetch('http://localhost:5000/api/getdata', {credentials: 'same-origin'})
+        const result = await res.json()
+      } catch (e) {
+        console.warn('An error downloading data.')
+        console.warn(e)
+      }
 
       this.setState((prevState, props) => {
         return { 
@@ -117,7 +121,8 @@ class App extends React.Component {
 
     const feedback = this.serializeFeedbackInput(e)
 
-    const res = await fetch('http://localhost:5000/api/feedback', {
+    try {
+      const res = await fetch('http://localhost:5000/api/feedback', {
       method: 'POST',
       credentials: 'same-origin',
       body: JSON.stringify(feedback),
@@ -125,11 +130,12 @@ class App extends React.Component {
               "Content-Type": "application/json; charset=utf-8"
           }
       })
+      const result = await res.json()
 
-    const result = await res.json()
-
-    // TODO: Error check
-    console.log(result)
+    } catch (e) {
+      console.warn('An err while trying to send feedback')
+      console.warn(e)
+    }
   }
 
   loadData = (data) => {
@@ -146,37 +152,44 @@ class App extends React.Component {
   }
 
   addTag = async ({tagName, feedbackId}) => {
-    console.log('addTag')
-    console.log({tagName, feedbackId})
-
-    const res = await fetch('http://localhost:5000/api/tag', {
-      credentials: 'same-origin',
-      method: 'POST',
-      body: JSON.stringify({
-        tagName,
-        feedbackId
-      }),
-      headers: {
-        "Content-Type": "application/json; charset=utf-8"
-      }
-    })
+    try {
+      const res = await fetch('http://localhost:5000/api/tag', {
+        credentials: 'same-origin',
+        method: 'POST',
+        body: JSON.stringify({
+          tagName,
+          feedbackId
+        }),
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        }
+      })
+      const result = await res.text()
+    } catch (e) {
+      console.log('err in addTag')
+      console.log(e)
+    }
   }
   
   removeTag = async ({feedbackId, tagName}) => {
-    console.log('removeTag')
-    console.log({feedbackId, tagName})
+    try {
+      const res = await fetch('http://localhost:5000/api/tag', {
+        credentials: 'same-origin',
+        method: 'DELETE',
+        body: JSON.stringify({
+          tagName,
+          feedbackId
+        }),
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        }
+      })
+      const result = await res.text()
 
-    const res = await fetch('http://localhost:5000/api/tag', {
-      credentials: 'same-origin',
-      method: 'DELETE',
-      body: JSON.stringify({
-        tagName,
-        feedbackId
-      }),
-      headers: {
-        "Content-Type": "application/json; charset=utf-8"
-      }
-    })
+    } catch (e) {
+      console.log('err in removeTag')
+      console.log(e)
+    }
   }
 
   selectTag = (options) => {
@@ -244,13 +257,16 @@ class App extends React.Component {
     this.setState((prevState, props) => {
       const data = prevState.data.concat()
       const index = findFeedbackIndexInDataByFeedbackId(data, body.feedbackId)
-      const tagsList = Object.keys(data[index].tags)
+      const tagsList = data[index].tags
       const updatedTagsList = {}
-      tagsList.forEach(tagName => {
+
+      Object.keys(tagsList).forEach(tagName => {
         if (tagName !== body.tagName)
           updatedTagsList[tagName] = tagsList[tagName]
       })
+
       data[index].tags = updatedTagsList
+
       return { data }
     })  
   }
