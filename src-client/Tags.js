@@ -33,8 +33,12 @@ class Tags extends React.Component {
   }
 
   render() {
-    const tags = this.props.data.split(' ')
-    const chipTags = tags.map(tag => {
+
+    const tags = this.props.data
+    const tagNames = Object.keys(tags)
+
+
+    const chipTags = tagNames.map(tag => {
       if (!tag) return
 
       return <span key={tag} style={chip_tag}>

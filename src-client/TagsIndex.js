@@ -12,7 +12,7 @@ class TagsIndex extends React.Component {
       const tagsCountInAllFeedbacks = {} 
 
       this.props.data.forEach(feedback => {
-      const tagsOfSingleFeedback = feedback.tags.split(' ')
+      const tagsOfSingleFeedback = Object.keys(feedback.tags)
       
       tagsOfSingleFeedback.forEach(aTag => {
 
