@@ -15,13 +15,15 @@ import ModalForm from './ModalForm'
 import DateRange from './DateRange'
 import SocketTransmitter from './SocketTransmitter'
 
+import data from './data'
+
 
 class App extends React.Component { 
   constructor(props) {
     super(props)
     this.state = {
       author: '',
-      data: [],
+      data: data,
       selectedTags: [],
       selectedDatesRange: {
         start: 0,
@@ -142,7 +144,7 @@ class App extends React.Component {
     })
   }
 
-  addTag = (options) => {
+  addTag = async (options) => {
     console.log('addTag')
     console.log(options)
     const data = this.state.data
@@ -157,6 +159,17 @@ class App extends React.Component {
     this.setState({
       data
     })
+
+
+    const res = await fetch('http://localhost:5000/api/getdata', {credentials: 'same-origin'})
+      const result = await res.json()
+      console.log(result)
+      this.setState((prevState, props) => {
+        return { 
+          data: result.data,
+          author: result.author
+        }
+      })
   }
   
   removeTag = (options) => {
@@ -256,7 +269,7 @@ class App extends React.Component {
     // Show only those feedbacks that have all selected tags.
     if (this.state.selectedTags.length) {
       filteredData = filteredData.filter(feedback => {  
-        const tagsOfFeedback = feedback.tags.split(' ')
+        const tagsOfFeedback = Object.keys(feedback.tags)
         return arrayIncludesAllEntries(tagsOfFeedback, this.state.selectedTags) 
       })
     }
