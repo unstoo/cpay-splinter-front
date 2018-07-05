@@ -11,10 +11,11 @@ class Tags extends React.Component {
 
   removeTag = (e) => {
     e.preventDefault()
-
+    const tagName = e.target.dataset.tagname
+    const feedbackId = this.props.feedbackid
     this.props.handlers.removeTag({
-      feedbackId: this.props.feedbackid,
-      tagName: e.target.dataset.tagname
+      feedbackId,
+      tagName
     })
   }
 
@@ -45,7 +46,7 @@ class Tags extends React.Component {
         <span>{ tag + ' ' }</span>
         <button onClick={this.removeTag} data-tagname={tag} 
           className='button' style={x_button_style}>
-            <span style={x_style}>x</span>
+            <span style={x_style} data-tagname={tag}>x</span>
         </button>
       </span>
     })
