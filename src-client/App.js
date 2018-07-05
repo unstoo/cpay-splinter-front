@@ -23,7 +23,7 @@ class App extends React.Component {
     super(props)
     this.state = {
       author: '',
-      data: data,
+      data: [],
       selectedTags: [],
       selectedDatesRange: {
         start: 0,
@@ -46,6 +46,7 @@ class App extends React.Component {
       const res = await fetch('http://localhost:5000/api/getdata', {credentials: 'same-origin'})
       const result = await res.json()
       console.log(result)
+
       this.setState((prevState, props) => {
         return { 
           data: result.data,
@@ -144,46 +145,37 @@ class App extends React.Component {
     })
   }
 
-  addTag = async (options) => {
+  addTag = async ({tagName, feedbackId}) => {
     console.log('addTag')
-    console.log(options)
-    const data = this.state.data
+    console.log({tagName, feedbackId})
 
-    const index = findFeedbackIndexInDataByFeedbackId(data, options.feedbackid)
-    const entry = data[index]
-    // duplicate tag for the given feedback entry
-    if (entry.tags.split(' ').includes(options.tagName)) return
-
-    entry.tags += ' ' + options.tagName
-    data[options.index] = entry
-    this.setState({
-      data
+    const res = await fetch('http://localhost:5000/api/tag', {
+      credentials: 'same-origin',
+      method: 'POST',
+      body: JSON.stringify({
+        tagName,
+        feedbackId
+      }),
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      }
     })
-
-
-    const res = await fetch('http://localhost:5000/api/getdata', {credentials: 'same-origin'})
-      const result = await res.json()
-      console.log(result)
-      this.setState((prevState, props) => {
-        return { 
-          data: result.data,
-          author: result.author
-        }
-      })
   }
   
-  removeTag = (options) => {
+  removeTag = async ({feedbackId, tagName}) => {
     console.log('removeTag')
-    console.log(options)
+    console.log({feedbackId, tagName})
 
-    const data = this.state.data
-    const index = findFeedbackIndexInDataByFeedbackId(data, options.feedbackid)
-    const entry = data[index]
-    const purgedTagsList = removeWordFromString(entry.tags, options.tagName)
-    entry.tags = purgedTagsList
-    data[options.index] = entry
-    this.setState({
-      data
+    const res = await fetch('http://localhost:5000/api/tag', {
+      credentials: 'same-origin',
+      method: 'DELETE',
+      body: JSON.stringify({
+        tagName,
+        feedbackId
+      }),
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      }
     })
   }
 
@@ -226,11 +218,41 @@ class App extends React.Component {
   }
 
   wsAddTag = ({ author, body }) => {
-    console.log('wsAddFeedback', author, body);
+    console.log('wsAddTag', author, body);
+
+    this.setState((prevState, props) => {
+
+      const data = prevState.data
+      // TODO hide spinner (and make one ;-))
+      const updatedTags = Object.assign(
+        {},
+        data[body.feedbackId].tags,
+        body.tags
+      )
+
+      data[body.feedbackId].tags = updatedTags
+
+      return { data }
+    })
+    alert('New tag(s) by ' + author)    
   }
 
-  wsRemoveTag = ({ author, body }) => {
-    console.log('wsAddFeedback', author, body);
+  wsDeleteTag = ({ author, body }) => {
+    console.log('wsDeleteTag', author, body)
+    console.log({ author, body })
+
+    this.setState((prevState, props) => {
+      const data = prevState.data.concat()
+      const index = findFeedbackIndexInDataByFeedbackId(data, body.feedbackId)
+      const tagsList = Object.keys(data[index].tags)
+      const updatedTagsList = {}
+      tagsList.forEach(tagName => {
+        if (tagName !== body.tagName)
+          updatedTagsList[tagName] = tagsList[tagName]
+      })
+      data[index].tags = updatedTagsList
+      return { data }
+    })  
   }
 
   isAuthorMe = (author) => {
@@ -279,9 +301,9 @@ class App extends React.Component {
       <ModalForm handlers={{onSubmit: this.sendFeedback}} visible={this.state.showModalForNewFeedback}/>
 
       <SocketTransmitter router={{
-        'feedback-add': this.wsAddFeedback, // { author, body: { id, chatUrl, date, comment, tags, country } }
-        'tag-add': this.wsAddTag, // { atuhor, body: { id, tagName } }
-        'tag-remove': this.wsRemoveTag, // { author, body: { id, tagName } }
+        'feedback-add': this.wsAddFeedback, // { author, body: { feedbackId, chatUrl, date, comment, tags, country } }
+        'tag-add': this.wsAddTag, // { atuhor, body: { feedbackId, tagName } }
+        'tag-delete': this.wsDeleteTag, // { author, body: { feedbackId, tagName } }
       }}/>
 
       <div className='feedbacks-list'>
