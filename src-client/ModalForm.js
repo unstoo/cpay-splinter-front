@@ -23,7 +23,6 @@ class ModalForm extends React.Component {
         <br/><label>Страна обратившегося? <input name='country' type='text'/></label>
         <br/><label>Комментарий? <input name='notes' type='text'/></label>
         <br/><label>Метки? <input name='tags' type='text'/></label>
-        <br/><input name='date' type='date' value={dateAsValue} hidden readonly/>
         <hr/>
         <button className='button'>Add New Feedback</button>
       </form>
