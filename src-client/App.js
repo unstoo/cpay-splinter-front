@@ -303,7 +303,7 @@ class App extends React.Component {
     if (!this.state.selectedTags.length &&
       this.state.showFeedbacksOnlyWithoutTags) {
         filteredData = filteredData.filter(feedback => {
-          return feedback.tags === ''
+          return Object.keys(feedback.tags).length === 0
         })
     }
     
