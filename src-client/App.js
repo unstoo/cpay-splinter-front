@@ -17,7 +17,6 @@ import SocketTransmitter from './SocketTransmitter'
 
 import data from './data'
 
-
 class App extends React.Component { 
   constructor(props) {
     super(props)
@@ -43,9 +42,10 @@ class App extends React.Component {
   }
 
   downloadData = async () => {
+      let result
       try {
         const res = await fetch('http://localhost:5000/api/getdata', {credentials: 'same-origin'})
-        const result = await res.json()
+        result = await res.json()
       } catch (e) {
         console.warn('An error downloading data.')
         console.warn(e)
@@ -235,15 +235,18 @@ class App extends React.Component {
 
     this.setState((prevState, props) => {
 
-      const data = prevState.data
-      // TODO hide spinner (and make one ;-))
+      const data = prevState.data.concat()
+      const index = findFeedbackIndexInDataByFeedbackId(data, body.feedbackId)
+      const tagsList = data[index].tags
+      const updatedTagsList = {}
+
       const updatedTags = Object.assign(
         {},
-        data[body.feedbackId].tags,
-        body.tags
+        body.tags,
+        data[index].tags,
       )
 
-      data[body.feedbackId].tags = updatedTags
+      data[index].tags = updatedTags
 
       return { data }
     })
