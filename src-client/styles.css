@@ -71,3 +71,56 @@ a {
   /* background-color: #fbfbfa; */
   border: 1px solid #eee;
 }
+
+
+.notification {
+  background: white;
+  border: 1px solid dodgerblue;
+  padding: 20px;
+  position: fixed;
+  z-index: 200;
+  top: 30px;
+  transition: left 5s;
+  left: 25px;
+}
+.notification--hidden {
+  left: -1000px;
+}
+
+.modal-shadow {
+  box-shadow: 8px 10px 20px 0 rgba(46,61,73,.15);
+}
+
+.modal-form {
+  max-width: 500px;
+}
+
+.modal-form__row {
+  display: flex;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.modal-form__label {
+  margin-right: 20px;
+}
+
+.modal-form__input {
+  margin-left: auto;
+}
+
+.modal-form__row--stack {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.modal-form__label--stack {
+  display: block;
+  margin: 15px auto;
+}
+
+.modal-form__input--stack {
+  margin: 0 auto;
+  width: 100%;
+}
