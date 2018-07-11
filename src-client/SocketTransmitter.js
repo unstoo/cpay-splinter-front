@@ -5,9 +5,9 @@ class Socket extends React.Component {
   constructor(props) {
     super(props)
     const token = document.cookie.split('=')[1]
-    console.log(`ws://localhost:5005`)
 
-    const socket = new WebSocket(`ws://localhost:5005`, token)
+    console.log(this.props.serverAddress)
+    const socket = new WebSocket(this.props.serverAddress, token)
 
     socket.onopen = function() {
       console.log("Соединение установлено.")

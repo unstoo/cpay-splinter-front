@@ -14,13 +14,25 @@ import LoadFileContent from './LoadFileContent'
 import ModalForm from './ModalForm'
 import DateRange from './DateRange'
 import SocketTransmitter from './SocketTransmitter'
+import NotificationDrawer from './NotificationDrawer'
 
 import data from './data'
 
-class App extends React.Component { 
+const address =  {
+  api: 'http://unstoo.xyz',
+  socket: 'ws://unstoo.xyz:5005'
+}
+
+if (process.env.NODE_ENV === 'dev') {
+  address.api = 'http://localhost:5000'
+  address.socket = 'ws://localhost:5005'
+} 
+
+class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      notification: 'durawka',
       author: '',
       data: [],
       selectedTags: [],
@@ -44,7 +56,7 @@ class App extends React.Component {
   downloadData = async () => {
       let result
       try {
-        const res = await fetch('http://localhost:5000/api/getdata', {credentials: 'same-origin'})
+        const res = await fetch(address.api + '/api/getdata', {credentials: 'same-origin'})
         result = await res.json()
       } catch (e) {
         console.warn('An error downloading data.')
@@ -122,7 +134,7 @@ class App extends React.Component {
     const feedback = this.serializeFeedbackInput(e)
 
     try {
-      const res = await fetch('http://localhost:5000/api/feedback', {
+      const res = await fetch(address.api + '/api/feedback', {
       method: 'POST',
       credentials: 'same-origin',
       body: JSON.stringify(feedback),
@@ -153,7 +165,7 @@ class App extends React.Component {
 
   addTag = async ({tagName, feedbackId}) => {
     try {
-      const res = await fetch('http://localhost:5000/api/tag', {
+      const res = await fetch(address.api+'/api/tag', {
         credentials: 'same-origin',
         method: 'POST',
         body: JSON.stringify({
@@ -173,7 +185,7 @@ class App extends React.Component {
   
   removeTag = async ({feedbackId, tagName}) => {
     try {
-      const res = await fetch('http://localhost:5000/api/tag', {
+      const res = await fetch(address.api+'/api/tag', {
         credentials: 'same-origin',
         method: 'DELETE',
         body: JSON.stringify({
@@ -227,7 +239,6 @@ class App extends React.Component {
         showModalForNewFeedback: this.isAuthorMe(author) ? false : prevState.showModalForNewFeedback  
       }
     })
-    
   }
 
   wsAddTag = ({ author, body }) => {
@@ -250,7 +261,7 @@ class App extends React.Component {
 
       return { data }
     })
-    alert('New tag(s) by ' + author)    
+    this.notification('New tag(s) by ' + author)    
   }
 
   wsDeleteTag = ({ author, body }) => {
@@ -317,13 +328,17 @@ class App extends React.Component {
 
 
     return <div className='main-frame'>
+      <NotificationDrawer msg={this.state.notification} timeout={this.state.notificationTimeout} />
+
       <ModalForm handlers={{onSubmit: this.sendFeedback}} visible={this.state.showModalForNewFeedback}/>
 
       <SocketTransmitter router={{
         'feedback-add': this.wsAddFeedback, // { author, body: { feedbackId, chatUrl, date, comment, tags, country } }
         'tag-add': this.wsAddTag, // { atuhor, body: { feedbackId, tagName } }
         'tag-delete': this.wsDeleteTag, // { author, body: { feedbackId, tagName } }
-      }}/>
+        }}
+        serverAddress={ address.socket }
+      />
 
       <div className='feedbacks-list'>
         { this.state.data.length > 0 && <React.Fragment>
