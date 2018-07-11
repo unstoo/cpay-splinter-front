@@ -16,7 +16,7 @@ import DateRange from './DateRange'
 import SocketTransmitter from './SocketTransmitter'
 import NotificationDrawer from './NotificationDrawer'
 
-import data from './data'
+// import data from './data'
 
 const address =  {
   api: 'http://unstoo.xyz',
@@ -58,17 +58,18 @@ class App extends React.Component {
       try {
         const res = await fetch(address.api + '/api/getdata', {credentials: 'same-origin'})
         result = await res.json()
+
+        this.setState((prevState, props) => {
+          return { 
+            data: result.data,
+            author: result.author
+          }
+        })
+        
       } catch (e) {
         console.warn('An error downloading data.')
         console.warn(e)
       }
-
-      this.setState((prevState, props) => {
-        return { 
-          data: result.data,
-          author: result.author
-        }
-      })
   }
 
   setDateRangeFilter = (options) => {

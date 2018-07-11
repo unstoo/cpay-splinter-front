@@ -13,9 +13,10 @@ class List extends React.Component {
   render() {
     const feedbacksList = this.props.data.map((feedback, index) => {
         return <div key={ 'feedback-' + feedback.id } style={styles} className='feedback-item'>
-          { feedback.id }) 
+          { feedback.id + ')'} 
           { ' ' + feedback['name'] + ' ' } 
           <a href={ feedback.url }>chat</a>
+          { ' :' + feedback.date}
           <br/>
           <hr/>
           <div>{ feedback.notes }</div>
@@ -24,8 +25,8 @@ class List extends React.Component {
             data={ feedback.tags }
             feedbackid={ feedback.id } />
 
-          <button style={styles_remove} data-feedbackindex={ feedback.id } 
-            onClick={this.props.handlers.removeFeedback} className='button'>Remove</button>
+          {/* <button style={styles_remove} data-feedbackindex={ feedback.id } 
+            onClick={this.props.handlers.removeFeedback} className='button'>Remove</button> */}
         </div>
     })
 

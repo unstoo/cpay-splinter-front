@@ -15,7 +15,6 @@ class TagsIndex extends React.Component {
       const tagsOfSingleFeedback = Object.keys(feedback.tags)
       
       tagsOfSingleFeedback.forEach(aTag => {
-
         if (aTag === '') return
         if (this.props.filteredTags.includes(aTag)) return
         
@@ -27,11 +26,12 @@ class TagsIndex extends React.Component {
       })
     })
 
-
     const keys = Object.keys(tagsCountInAllFeedbacks)
-    const chipTags = keys.map((key, index) => <span key={ key+'-'+index } style={ chipTag } data-tagname={key}
-      onClick={this.onTagClick}>
-      { key } : { tagsCountInAllFeedbacks[key] } </span>)
+
+    const chipTags = keys.map((key, index) => (
+      <span key={ key+'-'+index } style={ chipTag } data-tagname={key} onClick={this.onTagClick}>
+      { key } : { tagsCountInAllFeedbacks[key] } </span>
+    ))
 
     return <div className='list-component'>
       { chipTags }
