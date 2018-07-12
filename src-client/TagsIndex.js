@@ -9,7 +9,8 @@ class TagsIndex extends React.Component {
   }
 
   render() {    
-      const tagsCountInAllFeedbacks = {} 
+      const tagsCountInAllFeedbacks = {}
+      const { tagsByCategory } = this.props
 
       this.props.data.forEach(feedback => {
       const tagsOfSingleFeedback = Object.keys(feedback.tags)
@@ -26,15 +27,39 @@ class TagsIndex extends React.Component {
       })
     })
 
-    const keys = Object.keys(tagsCountInAllFeedbacks)
+    const tagsSortedByCategories = {
+      ['']: []
+    }
 
-    const chipTags = keys.map((key, index) => (
-      <span key={ key+'-'+index } style={ chipTag } data-tagname={key} onClick={this.onTagClick}>
-      { key } : { tagsCountInAllFeedbacks[key] } </span>
-    ))
+    const tagNames = Object.keys(tagsCountInAllFeedbacks)
+    
+    tagNames.sort().forEach((tagName, index) => {
+      let categoryName = 'none'
+
+      if (tagsByCategory[tagName]) {
+        categoryName = tagsByCategory[tagName]
+      }
+
+      if (!tagsSortedByCategories[categoryName]) {
+        tagsSortedByCategories[categoryName] = []
+      }
+
+      let tagChip = <span key={ tagName+'-'+index } style={ chipTag } data-tagname={tagName} onClick={this.onTagClick}>
+      { tagName } : { tagsCountInAllFeedbacks[tagName] } </span>
+
+      tagsSortedByCategories[categoryName].push(tagChip)
+    })
+
+    const tagsIndex = []
+
+    Object.keys(tagsSortedByCategories).forEach(categoryName => {
+      let category = <div><h4>{categoryName}</h4>{tagsSortedByCategories[categoryName]}</div>
+
+      tagsIndex.push(category)
+    })
 
     return <div className='list-component'>
-      { chipTags }
+      {tagsIndex}
     </div>
   }
 }

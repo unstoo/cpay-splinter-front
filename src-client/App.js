@@ -15,6 +15,7 @@ import ModalForm from './ModalForm'
 import DateRange from './DateRange'
 import SocketTransmitter from './SocketTransmitter'
 import NotificationDrawer from './NotificationDrawer'
+import TagsCategoriesSettings from './TagsCategoriesSettings'
 
 // import data from './data'
 
@@ -35,13 +36,20 @@ class App extends React.Component {
       notification: 'durawka',
       author: '',
       data: [],
+      tagsByCategory: {
+        kyc: 'department',
+        ico: 'product',
+        design: 'depratment'
+      },
+      categories: ['none', 'product', 'department', 'substance'],
       selectedTags: [],
       selectedDatesRange: {
         start: 0,
         end: 0,
       },
       showFeedbacksOnlyWithoutTags: false,
-      showModalForNewFeedback: false
+      showModalForNewFeedback: false,
+      showModalForTagsConfig: false
     } 
     
     this.downloadData()
@@ -62,10 +70,10 @@ class App extends React.Component {
         this.setState((prevState, props) => {
           return { 
             data: result.data,
-            author: result.author
+            author: result.author,
+            tagsByCategory: result.tagsByCategory
           }
         })
-        
       } catch (e) {
         console.warn('An error downloading data.')
         console.warn(e)
@@ -88,6 +96,13 @@ class App extends React.Component {
   showModal = () => {
     this.setState((prevState, props) => {
       return { showModalForNewFeedback: !prevState.showModalForNewFeedback }
+    })
+  }
+
+  showModal2 = () => {
+    this.setState((prevState, props) => {
+
+      return { showModalForTagsConfig: !prevState.showModalForTagsConfig }
     })
   }
 
@@ -118,22 +133,7 @@ class App extends React.Component {
     })
   }
 
-  serializeFeedbackInput = (e) => {
-    e.preventDefault()
-    const newFeedback = {}
-
-    e.target.querySelectorAll('input').forEach(input => {
-      newFeedback[input.name] = input.value
-      input.value = ''
-    })
-
-    return newFeedback
-  }
-
-  sendFeedback = async (e) => { 
-
-    const feedback = this.serializeFeedbackInput(e)
-
+  sendFeedback = async (feedback) => { 
     try {
       const res = await fetch(address.api + '/api/feedback', {
       method: 'POST',
@@ -223,6 +223,25 @@ class App extends React.Component {
     })
   }
 
+  setTagCategory = async(options) => {
+    console.log('setTagCategory', options);
+    try {
+      const res = await fetch(address.api + '/api/category', {
+      method: 'POST',
+      credentials: 'same-origin',
+      body: JSON.stringify(options),
+      headers: {
+              "Content-Type": "application/json; charset=utf-8"
+          }
+      })
+      const result = await res.json()
+
+    } catch (e) {
+      console.warn('An err while trying to send feedback')
+      console.warn(e)
+    }
+  }
+
   wsAddFeedback = ({ author, body }) => {
     console.log('wsAddFeedback')
     console.log(author, body);
@@ -286,6 +305,17 @@ class App extends React.Component {
     })  
   }
 
+  wsSetCategory = ({ author, body }) => {
+    console.log('wsSetCategory', author, body)
+    console.log({ author, body })
+
+    this.setState((prevState, props) => {
+      let tagsByCategory = prevState.tagsByCategory
+      tagsByCategory[body.tagName] = body.categoryName
+      return { tagsByCategory }
+    })  
+  }
+
   isAuthorMe = (author) => {
     return this.state.author === author
   }
@@ -332,11 +362,14 @@ class App extends React.Component {
       <NotificationDrawer msg={this.state.notification} timeout={this.state.notificationTimeout} />
 
       <ModalForm handlers={{onSubmit: this.sendFeedback}} visible={this.state.showModalForNewFeedback}/>
+      <TagsCategoriesSettings handlers={{onChange: this.setTagCategory}} categories={this.state.categories} data={this.state.tagsByCategory} amIVisible={this.state.showModalForTagsConfig} />
 
       <SocketTransmitter router={{
         'feedback-add': this.wsAddFeedback, // { author, body: { feedbackId, chatUrl, date, comment, tags, country } }
         'tag-add': this.wsAddTag, // { atuhor, body: { feedbackId, tagName } }
         'tag-delete': this.wsDeleteTag, // { author, body: { feedbackId, tagName } }
+        'tag-rename': this.wsRenameTag, // { author, body: { oldTagName, newTagName } }
+        'category-set': this.wsSetCategory // { author, body: { tagName, categoryName } }
         }}
         serverAddress={ address.socket }
       />
@@ -351,7 +384,7 @@ class App extends React.Component {
       </div>
 
       <div className='right'>
-        <a href='logout' className='button'>Logout</a>
+        <a href='logout' className='button' style={margin_bottom}>Logout</a>
         <Toggler handlers={{toggle: this.toggleFeedbackList}} 
           style={margin_bottom}>
           <SwitchChildren active={this.state.showFeedbacksOnlyWithoutTags}>
@@ -369,6 +402,7 @@ class App extends React.Component {
         </LoadFileContent>
 
         <div className='button' style={margin_bottom} onClick={this.showModal}>Add feedback</div>
+        <div className='button' style={margin_bottom} onClick={this.showModal2}>Tags config</div>
         
         <DateRange handlers={{ onSubmit : this.setDateRangeFilter }}>
           Set date range
@@ -378,6 +412,7 @@ class App extends React.Component {
 
           <h3>Tags index</h3> 
           <TagsIndex data={filteredData}
+            tagsByCategory={this.state.tagsByCategory}
             filteredTags={this.state.selectedTags}
             handlers={{selectTag: this.selectTag}} 
           />
