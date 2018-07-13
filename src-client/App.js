@@ -185,6 +185,7 @@ class App extends React.Component {
   }
   
   removeTag = async ({feedbackId, tagName}) => {
+
     try {
       const res = await fetch(address.api+'/api/tag', {
         credentials: 'same-origin',
@@ -223,13 +224,13 @@ class App extends React.Component {
     })
   }
 
-  setTagCategory = async(options) => {
+  setTagCategory = async({tagName, categoryName}) => {
     console.log('setTagCategory', options);
     try {
       const res = await fetch(address.api + '/api/category', {
       method: 'POST',
       credentials: 'same-origin',
-      body: JSON.stringify(options),
+      body: JSON.stringify({tagName, categoryName}),
       headers: {
               "Content-Type": "application/json; charset=utf-8"
           }
@@ -241,6 +242,30 @@ class App extends React.Component {
       console.warn(e)
     }
   }
+
+  renameTag = async({ currentTagName, newTagName }) => {
+    console.log('renameTag', {currentTagName, newTagName})
+    console.log({currentTagName, newTagName})
+
+    try {
+      const res = await fetch(address.api + '/api/tag', {
+      method: 'PATCH',
+      credentials: 'same-origin',
+      body: JSON.stringify({currentTagName, newTagName}),
+      headers: {
+              "Content-Type": "application/json; charset=utf-8"
+          }
+      })
+      const result = await res.json()
+      // TODO: not-ok api reply handler
+
+    } catch (e) {
+      console.warn('An err while trying to send feedback')
+      console.warn(e)
+    }
+  }
+
+  // WebSocket listeners
 
   wsAddFeedback = ({ author, body }) => {
     console.log('wsAddFeedback')
@@ -279,9 +304,17 @@ class App extends React.Component {
 
       data[index].tags = updatedTags
 
-      return { data }
+      let newTagsByCategory = {}
+
+      Object.keys(body.tags).forEach(tagName => {
+          newTagsByCategory[tagName] = 'none'
+      })
+
+      let returning = { data, tagsByCategory: Object.assign({}, newTagsByCategory, prevState.tagsByCategory) }
+      
+      return returning
     })
-    this.notification('New tag(s) by ' + author)    
+  
   }
 
   wsDeleteTag = ({ author, body }) => {
@@ -315,6 +348,61 @@ class App extends React.Component {
       return { tagsByCategory }
     })  
   }
+
+  wsPurgeTag = ({ author, body }) => {
+    console.log('wsPurgeTag', author, body)
+    console.log({ author, body })
+
+    this.setState((prevState, props) => {
+      let tagsByCategory = prevState.tagsByCategory
+      delete tagsByCategory[body.tagName]
+      return { tagsByCategory }
+    }) 
+
+  }
+
+  wsRenameTag = ({ author, body }) => {
+    console.log('wsRenameTag', author, body)
+    // body: { currentTagName, newTagName }
+    console.log({ author, body })
+
+    // Get fresh db dump
+    // or update 
+
+    this.setState((prevState, props) => {
+      let returning = { 
+        data: []
+       }
+
+      prevState.data.forEach(feedback => {
+        const containsTagNameToBeUpdated = Object.keys(feedback.tags).includes(body.currentTagName)
+        let temp = {}
+
+        if (containsTagNameToBeUpdated) {
+          temp = feedback.tags[body.currentTagName]
+          delete feedback.tags[body.currentTagName]
+          feedback.tags[body.newTagName] = temp
+        }
+
+        returning.data.push(feedback)
+      })
+
+      let updatedTagsByCategory = Object.assign({}, prevState.tagsByCategory)
+
+      let temp = updatedTagsByCategory[body.currentTagName]
+      delete updatedTagsByCategory[body.currentTagName]
+
+      if (updatedTagsByCategory[body.newTagName] === undefined) {
+        updatedTagsByCategory[body.newTagName] = temp
+      }
+
+      returning.tagsByCategory = updatedTagsByCategory
+
+      return returning
+    })
+  }
+
+  // Utils
 
   isAuthorMe = (author) => {
     return this.state.author === author
@@ -362,13 +450,14 @@ class App extends React.Component {
       <NotificationDrawer msg={this.state.notification} timeout={this.state.notificationTimeout} />
 
       <ModalForm handlers={{onSubmit: this.sendFeedback}} visible={this.state.showModalForNewFeedback}/>
-      <TagsCategoriesSettings handlers={{onChange: this.setTagCategory}} categories={this.state.categories} data={this.state.tagsByCategory} amIVisible={this.state.showModalForTagsConfig} />
+      <TagsCategoriesSettings handlers={{onChange: this.setTagCategory, renameTag: this.renameTag}} categories={this.state.categories} data={this.state.tagsByCategory} amIVisible={this.state.showModalForTagsConfig} />
 
       <SocketTransmitter router={{
         'feedback-add': this.wsAddFeedback, // { author, body: { feedbackId, chatUrl, date, comment, tags, country } }
         'tag-add': this.wsAddTag, // { atuhor, body: { feedbackId, tagName } }
         'tag-delete': this.wsDeleteTag, // { author, body: { feedbackId, tagName } }
-        'tag-rename': this.wsRenameTag, // { author, body: { oldTagName, newTagName } }
+        'tag-rename': this.wsRenameTag,
+        'tag-purge': this.wsPurgeTag, // { author, body: { tag } }
         'category-set': this.wsSetCategory // { author, body: { tagName, categoryName } }
         }}
         serverAddress={ address.socket }

@@ -53,7 +53,7 @@ class TagsIndex extends React.Component {
     const tagsIndex = []
 
     Object.keys(tagsSortedByCategories).forEach(categoryName => {
-      let category = <div><h4>{categoryName}</h4>{tagsSortedByCategories[categoryName]}</div>
+      let category = <div key={categoryName}><h4>{categoryName}</h4>{tagsSortedByCategories[categoryName]}</div>
 
       tagsIndex.push(category)
     })

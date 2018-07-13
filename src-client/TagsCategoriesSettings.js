@@ -5,23 +5,27 @@ import ReactDOM from 'react-dom'
 
 class TagsCategoriesSettings extends React.Component {
 
-  onClick = e => {
+  changeName = e => {
     e.preventDefault()
-    this.handlers.onChange
+
+    const newTagName = prompt('Enter new tag name')
+    const currentTagName = e.target.dataset.tagname
+    this.props.handlers.renameTag({ 
+      currentTagName,
+      newTagName
+    })
   }
   
   categoryOptions = ({tagName, currentCategory}) => { 
     let categoryOptions = []
 
     this.props.categories.forEach((category, index) => { 
-      categoryOptions.push(
-        category === currentCategory ?
-         <option key={index} selected>{category}</option> : <option key={index}>{category}</option>
-      ) 
+      categoryOptions.push(<option key={index}>{category}</option>) 
     })
 
-    return <select name={tagName} 
-      onChange={e => this.props.handlers.onChange({ tagName: e.target.name, categoryName: e.target.value})}>
+    return <select name={tagName} onChange={e => {
+      this.props.handlers.onChange({tagName: e.target.name, categoryName: e.target.value})
+    }} defaultValue={currentCategory}>
       { categoryOptions }
     </select>
   }
@@ -30,11 +34,15 @@ class TagsCategoriesSettings extends React.Component {
 
     const { data: tagsByCategory, categories } = this.props
     const rows = []
-    
 
     Object.keys(tagsByCategory).sort().forEach((tagName, index) => {
       let row = <tr key={ 'row' + index }>
-        <td>{ tagName }</td><td>{ this.categoryOptions({ tagName, currentCategory: tagsByCategory[tagName] }) }</td>
+        <td>
+          {/* TODO: use an .svg instead of img src */}
+          <img onClick={this.changeName} data-tagname={tagName} src='https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Ic_create_48px.svg/1000px-Ic_create_48px.svg.png' height='25' width='25'/>
+        </td>
+        <td>{ tagName }</td>
+        <td>{ this.categoryOptions({ tagName, currentCategory: tagsByCategory[tagName] }) }</td>
       </tr>
 
       rows.push(row)
