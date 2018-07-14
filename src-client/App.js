@@ -16,6 +16,9 @@ import DateRange from './DateRange'
 import SocketTransmitter from './SocketTransmitter'
 import NotificationDrawer from './NotificationDrawer'
 import TagsCategoriesSettings from './TagsCategoriesSettings'
+import AgentsIndex from './AgentsIndex'
+import Foldable from './Foldable'
+import OverflowVertical from './OverflowVertical'
 
 // import data from './data'
 
@@ -36,11 +39,7 @@ class App extends React.Component {
       notification: 'durawka',
       author: '',
       data: [],
-      tagsByCategory: {
-        kyc: 'department',
-        ico: 'product',
-        design: 'depratment'
-      },
+      tagsByCategory: {},
       categories: ['none', 'product', 'department', 'substance'],
       selectedTags: [],
       selectedDatesRange: {
@@ -53,12 +52,6 @@ class App extends React.Component {
     } 
     
     this.downloadData()
-  }
-
-  clearDateRangeFilter = () => {
-    this.setState({
-      selectedDatesRange: { start: 0, end: 0 }
-    })
   }
 
   downloadData = async () => {
@@ -225,7 +218,7 @@ class App extends React.Component {
   }
 
   setTagCategory = async({tagName, categoryName}) => {
-    console.log('setTagCategory', options);
+    console.log('setTagCategory', {tagName, categoryName})
     try {
       const res = await fetch(address.api + '/api/category', {
       method: 'POST',
@@ -447,10 +440,8 @@ class App extends React.Component {
 
 
     return <div className='main-frame'>
-      <NotificationDrawer msg={this.state.notification} timeout={this.state.notificationTimeout} />
 
-      <ModalForm handlers={{onSubmit: this.sendFeedback}} visible={this.state.showModalForNewFeedback}/>
-      <TagsCategoriesSettings handlers={{onChange: this.setTagCategory, renameTag: this.renameTag}} categories={this.state.categories} data={this.state.tagsByCategory} amIVisible={this.state.showModalForTagsConfig} />
+      <NotificationDrawer msg={this.state.notification} timeout={this.state.notificationTimeout} />
 
       <SocketTransmitter router={{
         'feedback-add': this.wsAddFeedback, // { author, body: { feedbackId, chatUrl, date, comment, tags, country } }
@@ -463,7 +454,11 @@ class App extends React.Component {
         serverAddress={ address.socket }
       />
 
-      <div className='feedbacks-list'>
+      <div className='feedbacks-list' style={{position: 'relative'}}>
+      <ModalForm handlers={{onSubmit: this.sendFeedback}} visible={this.state.showModalForNewFeedback}/>
+      <TagsCategoriesSettings handlers={{onChange: this.setTagCategory, renameTag: this.renameTag}} categories={this.state.categories} data={this.state.tagsByCategory} amIVisible={this.state.showModalForTagsConfig} />
+
+
         { this.state.data.length > 0 && <React.Fragment>
           <h2>Feedback list</h2> 
           <List data={filteredData}
@@ -482,24 +477,28 @@ class App extends React.Component {
           </SwitchChildren>
         </Toggler>
 
-        <SaveToFile data={this.state.data} style={margin_bottom}>
+        {/* <SaveToFile data={this.state.data} style={margin_bottom}>
           Save feedbacks
-        </SaveToFile>
+        </SaveToFile> */}
 
-        <LoadFileContent handlers={{dataLoaded: this.loadData}} style={margin_bottom}>
+        {/* <LoadFileContent handlers={{dataLoaded: this.loadData}} style={margin_bottom}>
           Load feedbacks
-        </LoadFileContent>
+        </LoadFileContent> */}
 
         <div className='button' style={margin_bottom} onClick={this.showModal}>Add feedback</div>
-        <div className='button' style={margin_bottom} onClick={this.showModal2}>Tags config</div>
+        {' '}
+        <div className='button' style={margin_bottom} onClick={this.showModal2}>Edit tags</div>
         
-        <DateRange handlers={{ onSubmit : this.setDateRangeFilter }}>
-          Set date range
+        <DateRange handlers={{ onSubmit : this.setDateRangeFilter }} start={this.state.selectedDatesRange.start}
+          end={this.state.selectedDatesRange.end}>
+          {"Set date range"}
+          {"Clear date range"}
         </DateRange>
+        
+        <OverflowVertical>
 
-        <button className='button' onClick={this.clearDateRangeFilter}>Clear date range</button>
-
-          <h3>Tags index</h3> 
+        <Foldable label={'Tags'}>
+        <h3>Tags index</h3> 
           <TagsIndex data={filteredData}
             tagsByCategory={this.state.tagsByCategory}
             filteredTags={this.state.selectedTags}
@@ -509,6 +508,13 @@ class App extends React.Component {
           <h3>Filter by tags</h3>
           <TagsFilter data={this.state.selectedTags}
             handlers={{deselectTag: this.deselectTag}}/>
+        </Foldable>
+          
+        <Foldable label={'Agents'}>
+          <AgentsIndex data={filteredData} />
+        </Foldable>
+
+        </OverflowVertical>
       </div>
     </div>
   }
