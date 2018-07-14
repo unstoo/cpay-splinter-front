@@ -36,7 +36,7 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      notification: 'durawka',
+      notification: '',
       author: '',
       data: [],
       tagsByCategory: {},
@@ -52,6 +52,7 @@ class App extends React.Component {
     } 
     
     this.downloadData()
+
   }
 
   downloadData = async () => {
@@ -259,10 +260,11 @@ class App extends React.Component {
   }
 
   // WebSocket listeners
-
   wsAddFeedback = ({ author, body }) => {
     console.log('wsAddFeedback')
     console.log(author, body);
+    this.showNotification(`${author} added new feedback`)
+
     const newFeedback = body
 
     this.setState((prevState, props) => {
@@ -281,6 +283,7 @@ class App extends React.Component {
 
   wsAddTag = ({ author, body }) => {
     console.log('wsAddTag', author, body);
+    this.showNotification(`${author} added new tag(s) "${Object.keys(body.tags).join(', ')}"`)
 
     this.setState((prevState, props) => {
 
@@ -313,6 +316,8 @@ class App extends React.Component {
   wsDeleteTag = ({ author, body }) => {
     console.log('wsDeleteTag', author, body)
     console.log({ author, body })
+    this.showNotification(`${author} removed tag "${body.tagName}" from feedback "${body.feedbackId}"`)
+
 
     this.setState((prevState, props) => {
       const data = prevState.data.concat()
@@ -345,6 +350,7 @@ class App extends React.Component {
   wsPurgeTag = ({ author, body }) => {
     console.log('wsPurgeTag', author, body)
     console.log({ author, body })
+    
 
     this.setState((prevState, props) => {
       let tagsByCategory = prevState.tagsByCategory
@@ -358,7 +364,7 @@ class App extends React.Component {
     console.log('wsRenameTag', author, body)
     // body: { currentTagName, newTagName }
     console.log({ author, body })
-
+    this.showNotification(`${author} renamed tag "${body.currentTagName}" to "${body.newTagName}"`)
     // Get fresh db dump
     // or update 
 
@@ -411,6 +417,7 @@ class App extends React.Component {
   }
 
   render() {
+    window.nn = this.showNotification
     let filteredData = this.state.data
 
     // Filter by date range
@@ -438,7 +445,6 @@ class App extends React.Component {
       })
     }
 
-
     return <div className='main-frame'>
 
       <NotificationDrawer msg={this.state.notification} timeout={this.state.notificationTimeout} />
@@ -455,9 +461,8 @@ class App extends React.Component {
       />
 
       <div className='feedbacks-list' style={{position: 'relative'}}>
-      <ModalForm handlers={{onSubmit: this.sendFeedback, onToggle: this.showModal}} visible={this.state.showModalForNewFeedback}/>
-      <TagsCategoriesSettings handlers={{onChange: this.setTagCategory, renameTag: this.renameTag, onToggle: this.showModal2}} categories={this.state.categories} data={this.state.tagsByCategory} amIVisible={this.state.showModalForTagsConfig} />
-
+        <ModalForm handlers={{onSubmit: this.sendFeedback, onToggle: this.showModal}} visible={this.state.showModalForNewFeedback}/>
+        <TagsCategoriesSettings handlers={{onChange: this.setTagCategory, renameTag: this.renameTag, onToggle: this.showModal2}} categories={this.state.categories} data={this.state.tagsByCategory} amIVisible={this.state.showModalForTagsConfig} />
 
         { this.state.data.length > 0 && <React.Fragment>
           <h2>Feedback list</h2> 
