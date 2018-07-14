@@ -11,12 +11,12 @@ class ModalForm extends React.Component {
     this.state = {
       countryOptions: (() => {
         let list = []
-        country_list.forEach(country => list.push(<option>{country}</option>))
+        country_list.forEach(country => list.push(<option key={country}>{country}</option>))
         return list
       })(),
       langOptions: (() => {
         let list = []
-        languages.forEach(lang => list.push(<option>{lang}</option>))
+        languages.forEach(lang => list.push(<option key={lang}>{lang}</option>))
         return list
       })()
     }
@@ -25,16 +25,14 @@ class ModalForm extends React.Component {
   onSubmit = e => {
     e.preventDefault()
     const feedbackJSON = serializeFeedbackInput(e)
-    debugger
     this.props.handlers.onSubmit(feedbackJSON)
   }
 
   render() {
-    const date = new Date()
-    const dateAsValue = date.toJSON().split('T')[0]
-    console.log(dateAsValue);
-    
-    return <div style={this.props.visible ? style_visible : style_hidden} className='modal-shadow'>
+    return <React.Fragment>
+    <div style={this.props.visible ? style_visible_pad : style_hidden_pad} 
+      onClick={this.props.handlers.onToggle}></div>
+    <div style={this.props.visible ? style_visible : style_hidden} className='modal-shadow'>
       <form className='modal-form' onSubmit={this.onSubmit}>
         <label className='modal-form__row'>
           <span className='modal-form__label'>Линк на источник</span>
@@ -64,6 +62,7 @@ class ModalForm extends React.Component {
         <button className='button'>Add New Feedback</button>
       </form>
     </div>
+    </React.Fragment>
   }
 }
 
@@ -91,6 +90,30 @@ const style_hidden = {
   borderRadius: '5px',
   border: '1px solid #eee',
   transition: 'top .5s'
+}
+
+const style_visible_pad = {
+  position: 'fixed',
+  zIndex: '1',
+  left: '0',
+  right: '0',
+  bottom: '0',
+  background: 'rgba(0,0,0,0.5)',
+  transition: 'opacity .8s',
+  opacity: '1',
+  height: '100vh'
+}
+
+const style_hidden_pad = {
+  position: 'fixed',
+  zIndex: '1',
+  left: '0',
+  right: '0',
+  bottom: '0',
+  background: 'rgba(0,0,0,0.5)',
+  transition: 'opacity .8s',
+  opacity: '0',
+  height: '0'
 }
 
 const serializeFeedbackInput = (e) => {

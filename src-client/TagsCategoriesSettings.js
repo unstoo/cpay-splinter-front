@@ -50,13 +50,17 @@ class TagsCategoriesSettings extends React.Component {
     // tags
     // categories
 
-    return <div style={this.props.amIVisible ? style_visible : style_hidden} className='modal-shadow'>
-      <table>
-        <tbody>
-        { rows }
-        </tbody>
-      </table>
-    </div>
+    return <React.Fragment>
+      <div style={this.props.amIVisible ? style_visible_pad : style_hidden_pad} 
+        onClick={this.props.handlers.onToggle}></div>
+      <div style={this.props.amIVisible ? style_visible : style_hidden} className='modal-shadow'>
+        <table>
+          <tbody>
+          { rows }
+          </tbody>
+        </table>
+      </div>
+    </React.Fragment>
   }
 }
 
@@ -76,9 +80,9 @@ export default TagsCategoriesSettings
 
 const style_visible = {
   top: '100px',
-  position: 'fixed',
+  position: 'absolute',
   background: 'white',
-  left: '320px',
+  left: '20px',
   zIndex: '2',
   padding: '100px',
   borderRadius: '5px',
@@ -88,9 +92,9 @@ const style_visible = {
 
 const style_hidden = {
   top: '-1000px',
-  position: 'fixed',
+  position: 'absolute',
   background: 'white',
-  left: '320px',
+  left: '20px',
   zIndex: '2',
   padding: '100px',
   borderRadius: '5px',
@@ -98,4 +102,26 @@ const style_hidden = {
   transition: 'top .5s'
 }
 
+const style_visible_pad = {
+  position: 'fixed',
+  zIndex: '1',
+  left: '0',
+  right: '0',
+  bottom: '0',
+  background: 'rgba(0,0,0,0.5)',
+  transition: 'opacity .8s',
+  opacity: '1',
+  height: '100vh'
+}
 
+const style_hidden_pad = {
+  position: 'fixed',
+  zIndex: '1',
+  left: '0',
+  right: '0',
+  bottom: '0',
+  background: 'rgba(0,0,0,0.5)',
+  transition: 'opacity .8s',
+  opacity: '0',
+  height: '0'
+}

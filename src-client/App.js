@@ -455,8 +455,8 @@ class App extends React.Component {
       />
 
       <div className='feedbacks-list' style={{position: 'relative'}}>
-      <ModalForm handlers={{onSubmit: this.sendFeedback}} visible={this.state.showModalForNewFeedback}/>
-      <TagsCategoriesSettings handlers={{onChange: this.setTagCategory, renameTag: this.renameTag}} categories={this.state.categories} data={this.state.tagsByCategory} amIVisible={this.state.showModalForTagsConfig} />
+      <ModalForm handlers={{onSubmit: this.sendFeedback, onToggle: this.showModal}} visible={this.state.showModalForNewFeedback}/>
+      <TagsCategoriesSettings handlers={{onChange: this.setTagCategory, renameTag: this.renameTag, onToggle: this.showModal2}} categories={this.state.categories} data={this.state.tagsByCategory} amIVisible={this.state.showModalForTagsConfig} />
 
 
         { this.state.data.length > 0 && <React.Fragment>
