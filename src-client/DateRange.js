@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom'
 class DateRange extends React.Component { 
   constructor(props) {
     super(props)
-    console.log('DateRange props:', [props.start, props.end]);
     
     this.state = {
       isRangeSane: false,
@@ -62,14 +61,14 @@ class DateRange extends React.Component {
 
   startDate = (e) => {
     if (e.target.tagName === 'INPUT') {
-      return e.target.parentNode.querySelectorAll('input[name=start]')[0].value
+      return e.target.parentNode.parentNode.querySelectorAll('input[name=start]')[0].value
     }
     return e.target.querySelectorAll('input[name=start]')[0].value
   }
 
   endDate = (e) => {
     if (e.target.tagName === 'INPUT') {
-      return e.target.parentNode.querySelectorAll('input[name=end]')[0].value
+      return e.target.parentNode.parentNode.querySelectorAll('input[name=end]')[0].value
     }
     return e.target.querySelectorAll('input[name=end]')[0].value
   }
@@ -90,9 +89,13 @@ class DateRange extends React.Component {
     end = end === 0 ? '' : end
     return <div>
       <form onSubmit={ this.onSubmit }>
-        <input name='start' type='date' onChange={this.checkDateRangeSanity} value={start}/>
-        <input name='end' type='date' onChange={this.checkDateRangeSanity} value={end}/>
-        <button className='button'> { this.props.children[0] } </button>
+        <label style={style_label}>From
+          <input name='start' type='date' onChange={this.checkDateRangeSanity} value={start} style={style_input}/>
+        </label>
+        <label style={style_label}>To
+          <input name='end' type='date' onChange={this.checkDateRangeSanity} value={end} style={style_input}/>
+        </label>
+        <button className='button' style={style_margin_button}> { this.props.children[0] } </button>
         <button className='button' type='button' onClick={this.clearDates}> { this.props.children[1] } </button>
       </form>
     </div>
@@ -100,3 +103,21 @@ class DateRange extends React.Component {
 }
 
 export default DateRange
+
+const style_margin_button= {
+  marginTop: '10px',
+  marginRight: '5px'
+}
+const style_label = {
+  display: 'flex',
+  width: '100%'
+}
+const style_input = {
+  marginLeft: 'auto',
+  marginRight: '90px',
+  marginBottom: '5px',
+  paddingLeft: '5px',
+  borderRadius: '5px',
+  border: '1px solid #ccc',
+  height: '24px'
+}

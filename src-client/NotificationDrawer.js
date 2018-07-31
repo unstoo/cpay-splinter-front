@@ -4,9 +4,7 @@ import ReactDOM from 'react-dom'
 class NotificationDrawer extends React.Component {
   constructor(props) {
     super(props)
-    console.log('DrawerCtor');
-    
-    // what happens when
+
     this.state = {
       msg: props.msg,
       visible: false,
@@ -16,26 +14,6 @@ class NotificationDrawer extends React.Component {
 
   onClick = e => {
     e.preventDefault()
-  }
-
-  componentDidMount() {
-        
-    //   setTimeout(() => {
-    //       console.log('didMount')
-    //       this.setState(() => {
-    //         return { visible: true }
-    //       })
-    //     }
-    //   , 500)
-
-    //   setTimeout(() => {
-    //     console.log('didMount')
-    //     this.setState(() => {
-    //       return { visible: false }
-    //     })
-    //   }
-    // , 6000)
-    
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -48,7 +26,7 @@ class NotificationDrawer extends React.Component {
         this.setState({
           visible: false
         })
-      }, 3000)
+      }, 4400)
     }
   }
 

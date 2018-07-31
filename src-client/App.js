@@ -173,7 +173,7 @@ class App extends React.Component {
       })
       const result = await res.text()
     } catch (e) {
-      console.log('err in addTag')
+      console.log('Error in addTag(); args: ', {tagName, feedbackId})
       console.log(e)
     }
   }
@@ -402,7 +402,6 @@ class App extends React.Component {
   }
 
   // Utils
-
   isAuthorMe = (author) => {
     return this.state.author === author
   }
@@ -447,6 +446,8 @@ class App extends React.Component {
 
     return <div className='main-frame'>
 
+      <img src='/splinter.png' width={70} height={70} style={style_logo}/>
+
       <NotificationDrawer msg={this.state.notification} timeout={this.state.notificationTimeout} />
 
       <SocketTransmitter router={{
@@ -465,7 +466,6 @@ class App extends React.Component {
         <TagsCategoriesSettings handlers={{onChange: this.setTagCategory, renameTag: this.renameTag, onToggle: this.showModal2}} categories={this.state.categories} data={this.state.tagsByCategory} amIVisible={this.state.showModalForTagsConfig} />
 
         { this.state.data.length > 0 && <React.Fragment>
-          <h2>Feedback list</h2> 
           <List data={filteredData}
             handlers={{addTag: this.addTag, removeTag: this.removeTag, removeFeedback: this.removeFeedback}}  
           />
@@ -503,14 +503,13 @@ class App extends React.Component {
         <OverflowVertical>
 
         <Foldable label={'Tags'}>
-        <h3>Tags index</h3> 
           <TagsIndex data={filteredData}
             tagsByCategory={this.state.tagsByCategory}
             filteredTags={this.state.selectedTags}
             handlers={{selectTag: this.selectTag}} 
           />
 
-          <h3>Filter by tags</h3>
+          <h3>Selected tags:</h3>
           <TagsFilter data={this.state.selectedTags}
             handlers={{deselectTag: this.deselectTag}}/>
         </Foldable>
@@ -567,3 +566,11 @@ function findFeedbackIndexInDataByFeedbackId(data, id) {
 }
 
 const margin_bottom = {marginBottom: '10px'}
+
+const style_logo = {
+  position: 'fixed',
+  top: '10px',
+  right: '20px',
+  zIndex: '5',
+  opacity: '.8'
+}

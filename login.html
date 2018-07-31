@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <title>SPLINTER</title>
+    <style>
+    </style>
+
+  </head>
+  <body>
+      <style type="text/css">
+      a {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+        #gSignInWrapper {
+          display: flex;
+          width: 95vw;
+          height: 95vh;
+          justify-content: center;
+          border: 1px red solid;
+          box-sizing: border-box;
+          align-items: center;
+        }
+        #customBtn {
+          display: inline-block;
+          background: white;
+          color: #444;
+          width: 190px;
+          border-radius: 5px;
+          border: thin solid #888;
+          box-shadow: 1px 1px 1px grey;
+          white-space: nowrap;
+          margin: 0 auto;
+        }
+        #customBtn:hover {
+          cursor: pointer;
+        }
+        span.label {
+          font-family: serif;
+          font-weight: normal;
+        }
+        span.icon {
+          background: url('https://developers.google.com/identity/sign-in/g-normal.png') transparent 5px 50% no-repeat;
+          display: inline-block;
+          vertical-align: middle;
+          width: 42px;
+          height: 42px;
+        }
+        span.buttonText {
+          display: inline-block;
+          vertical-align: middle;
+          padding-left: 42px;
+          padding-right: 42px;
+          font-size: 14px;
+          font-weight: bold;
+          /* Use the Roboto font that is loaded in the <head> */
+          font-family: 'Roboto', sans-serif;
+        }
+      </style>
+      </head>
+      <body>
+      <!-- In the callback, you would hide the gSignInWrapper element on a
+      successful sign in -->
+      <div id="gSignInWrapper">
+        <a href='auth/google'>
+        <img src="splinter.png">
+        <div id="customBtn" class="customGPlusSignIn">
+          <span class="icon"></span>
+          <span class="buttonText">Google</span>
+        </div>
+      </a>
+      </div>
+      
+  </body>
+</html>

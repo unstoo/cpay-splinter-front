@@ -29,7 +29,7 @@ class Socket extends React.Component {
       try {
         data = JSON.parse(event.data)
       } catch (e) {
-        console.error('Couldn\'t parse JSON from WebSocket data.')
+        console.error('Couldn\'t parse JSON from WebSocket data: ', event.data)
         return
       }
 

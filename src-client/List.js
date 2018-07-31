@@ -13,11 +13,12 @@ class List extends React.Component {
   render() {
     const feedbacksList = this.props.data.map((feedback, index) => {
         return <div key={ 'feedback-' + feedback.id } style={styles} className='feedback-item'>
-          { feedback.id + ')'} 
-          { ' ' + feedback['name'] + ' ' } 
-          <a href={ feedback.url }>chat</a>
-          { ' :' + feedback.date}
-          <br/>
+          <div style={style_header}>
+            { feedback.id + ')'} 
+            { ' ' + feedback['name'] + ' ' } 
+            <a style={style_source} href={ feedback.url } target='_blank'>source</a>
+            <span style={style_date}>{feedback.date}</span>
+          </div>
           <hr/>
           <div>{ feedback.notes }</div>
           <Tags 
@@ -48,4 +49,17 @@ const styles_remove = {
   right: '15px',
   bottom: '15px',
   zIndex: '2'
+}
+
+const style_header = {
+  display: 'flex'
+}
+
+const style_date = {
+  marginLeft: 'auto',
+  color: '#777'
+}
+
+const style_source = {
+  marginLeft: '15px'
 }
